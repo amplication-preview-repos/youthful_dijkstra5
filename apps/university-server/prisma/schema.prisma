@@ -1,0 +1,109 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  createdAt    DateTime    @default(now())
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  email        String?
+  grades       Grade[]
+  id           String      @id @default(cuid())
+  name         String?
+  quizzes      Quiz[]
+  rollNumber   String?
+  section      String?
+  updatedAt    DateTime    @updatedAt
+}
+
+model Department {
+  courses          Course[]
+  createdAt        DateTime  @default(now())
+  headOfDepartment String?
+  id               String    @id @default(cuid())
+  name             String?
+  students         Student[]
+  teachers         Teacher[]
+  updatedAt        DateTime  @updatedAt
+}
+
+model Teacher {
+  courses      Course[]
+  createdAt    DateTime    @default(now())
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  email        String?
+  employeeId   String?
+  id           String      @id @default(cuid())
+  name         String?
+  updatedAt    DateTime    @updatedAt
+}
+
+model Course {
+  assignments  Assignment[]
+  code         String?
+  createdAt    DateTime     @default(now())
+  department   Department?  @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  id           String       @id @default(cuid())
+  name         String?
+  quizzes      Quiz[]
+  section      String?
+  teacher      Teacher?     @relation(fields: [teacherId], references: [id])
+  teacherId    String?
+  updatedAt    DateTime     @updatedAt
+}
+
+model Grade {
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
+  assignmentId String?
+  createdAt    DateTime    @default(now())
+  grade        String?
+  id           String      @id @default(cuid())
+  student      Student?    @relation(fields: [studentId], references: [id])
+  studentId    String?
+  updatedAt    DateTime    @updatedAt
+}
+
+model Quiz {
+  course      Course?  @relation(fields: [courseId], references: [id])
+  courseId    String?
+  createdAt   DateTime @default(now())
+  description String?
+  gradedBy    String?
+  id          String   @id @default(cuid())
+  student     Student? @relation(fields: [studentId], references: [id])
+  studentId   String?
+  title       String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Assignment {
+  course      Course?  @relation(fields: [courseId], references: [id])
+  courseId    String?
+  createdAt   DateTime @default(now())
+  description String?
+  gradedBy    String?
+  grades      Grade[]
+  id          String   @id @default(cuid())
+  submittedBy String?
+  title       String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Section {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model AcademicYear {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
